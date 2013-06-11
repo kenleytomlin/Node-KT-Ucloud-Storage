@@ -3,6 +3,7 @@ should = require 'should'
 QueryStringBuilder = require '../lib/QueryStringBuilder'
 
 describe 'It should create a querystring from an object', ->
+  query = undefined
   describe '', ->
     before ->
       query =
@@ -14,6 +15,7 @@ describe 'It should create a querystring from an object', ->
       queryString.should.equal 'limit=10&format=json'
 
   describe '', ->
+    query = undefined
     before ->
       query = null
     it 'should return an error', ->

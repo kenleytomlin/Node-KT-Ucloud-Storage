@@ -6,6 +6,7 @@ nock = require 'nock'
 describe 'UCloud authenticate method test', ->
   describe '', ->
     scope = undefined
+    headers = undefined
     before ->
       reply =
         storage: 
@@ -16,17 +17,19 @@ describe 'UCloud authenticate method test', ->
         'X-Storage-Token': 'AUTH_tk5f6d351c490b44b8b60b015e744a435a'
         'X-Auth-Token': 'AUTH_tk5f6d351c490b44b8b60b015e744a435a'
         'Content-Length': '112'
-      scope = nock('http://api.ucloudbiz.olleh.com').get('/storage/v1/auth').reply(200,reply,headers)
+        'X-Auth-Token-Expires': '39572'
+      scope = nock('https://api.ucloudbiz.olleh.com').get('/storage/v1/auth').reply(200,reply,headers)
     it 'should set the token and storage url from the response header', (done) ->
       options =
-        host: 'http://api.ucloudbiz.olleh.com'
+        authUrl: 'https://api.ucloudbiz.olleh.com/storage/v1/auth'
         api_key: 'API_KEY'
         user: 'test@gmail.com'
       ucloud = new UCloud options
       ucloud.auth (err,res) ->
         should.not.exist err
         should.exist ucloud.storageUrl
-        should.exist ucloud.api_key
+        should.exist ucloud.token
+        should.exist ucloud.tokenExpiry
         should.exist res
         res.should.be.a 'boolean'
         res.should.equal true
@@ -39,9 +42,9 @@ describe 'UCloud authenticate method test', ->
 
   describe 'auth error handling', ->
     it 'should return a message that the authentication has failed', (done) ->
-      scope = nock('http://api.ucloudbiz.olleh.com').get('/storage/v1/auth').reply(401)
+      scope = nock('https://api.ucloudbiz.olleh.com').get('/storage/v1/auth').reply(401)
       options =
-        host: 'http://api.ucloudbiz.olleh.com'
+        authUrl: 'https://api.ucloudbiz.olleh.com/storage/v1/auth'
         api_key: 'API_KEY'
         user: 'test@gmail.com'
       ucloud = new UCloud options
@@ -52,3 +55,4 @@ describe 'UCloud authenticate method test', ->
         err.message.should.equal 'UCloud Auth : Authentication failed'
         scope.done()
         done()
+  
