@@ -17,4 +17,3 @@ describe 'UCloud storage API constructor', ->
       authUrl : 'https://api.ucloudbiz.olleh.com'
       user : 'test@gmail.com'
     it 'should throw an error because the api_key is missing from the options', ->
-      
