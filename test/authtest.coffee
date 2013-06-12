@@ -3,8 +3,8 @@ mocha = require 'mocha'
 should = require 'should'
 nock = require 'nock'
 
-describe 'UCloud authenticate method test', ->
-  describe '', ->
+describe 'UCloud.auth', ->
+  describe '200 - Success', ->
     scope = undefined
     headers = undefined
     before ->
@@ -36,11 +36,11 @@ describe 'UCloud authenticate method test', ->
         ucloud.token.should.be.a 'string'
         ucloud.storageUrl.should.be.a 'string'
         ucloud.token.should.equal 'AUTH_tk5f6d351c490b44b8b60b015e744a435a'
-        ucloud.storageUrl.should.equal 'https://ssproxy.ucloudbiz.olleh.com/v1/AUTH_024067c0-f236-4d2a-80d0-736698fb6d36'
+        ucloud.storageUrl.should.equal 'https://ssproxy.ucloudbiz.olleh.com/v1/AUTH_024067c0-f236-4d2a-80d0-736698fb6d36/'
         scope.done()
         done()
 
-  describe 'auth error handling', ->
+  describe '401 - Failure', ->
     it 'should return a message that the authentication has failed', (done) ->
       scope = nock('https://api.ucloudbiz.olleh.com').get('/storage/v1/auth').reply(401)
       options =

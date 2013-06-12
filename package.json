@@ -9,6 +9,7 @@
   "dependencies": {
     "request": "",
     "underscore": "",
+    "underscore.string": "",
     "qs": ""
   },
   "devDependencies": {

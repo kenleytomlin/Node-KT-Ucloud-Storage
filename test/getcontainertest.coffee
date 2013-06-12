@@ -9,7 +9,7 @@ describe 'Ucloud.getContainer', ->
     headers = undefined
     json = undefined
     ucloud = undefined
-    before ->
+    before (done) ->
       options = 
         api_key: 'API_KEY'
         authUrl: 'https://api.ucloudbiz.olleh.com/storage/v1/auth'
@@ -47,6 +47,7 @@ describe 'Ucloud.getContainer', ->
         "X-Container-Object-Count":2
         "X-Container-Bytes-Used":500
       scope = nock('https://ssproxy.ucloudbiz.olleh.com').get('/v1/AUTH_024067c0-f236-4d2a-80d0-736698fb6d36/mall?format=json&limit=5').reply(200,headers,body)
+      done()
 
     it 'should get information about a storage container', (done) ->
       options = 
@@ -67,7 +68,7 @@ describe 'Ucloud.getContainer', ->
     headers = undefined
     xml = undefined
     ucloud = undefined
-    before ->
+    before (done) ->
       options = 
         api_key: 'API_KEY'
         authUrl: 'https://api.ucloudbiz.olleh.com/storage/v1/auth'
@@ -83,7 +84,8 @@ describe 'Ucloud.getContainer', ->
         "X-Container-Bytes-Used" : 78
         "Content-Length": 32
         "Content-Type": "application/xml; charset=UTF-8"
-      scope = nock('https://ssproxy.ucloudbiz.olleh.com').get('/v1/AUTH_024067c0-f236-4d2a-80d0-736698fb6d36/mall?format=xml&limit=5').reply(200,headers,xml)
+      scope = nock('https://ssproxy.ucloudbiz.olleh.com/').get('/v1/AUTH_024067c0-f236-4d2a-80d0-736698fb6d36/mall?format=xml&limit=5').reply(200,headers,xml)
+      done()
 
     it 'should get information about a storage container', (done) ->
       options =
