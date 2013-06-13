@@ -312,6 +312,41 @@ class UCloud
     else
       callback new Error "UCloud : Upload missing arguments in options"
 
+  delete: (options, callback) ->
+    self = @
+    if options? and options.container? and options.fileName?
+      async.waterfall [
+        (callback) ->
+          if self.autoRefresh is true
+            self._checkExpiry (err) ->
+              if err then return callback err
+              callback null
+          else
+            callback null
+        ,(callback) ->
+          reqOpts =
+            headers:
+              "X-Auth-Token":self.token
+            url:
+              url.parse url.resolve(self.storageUrl, options.container + '/' + options.fileName)
+            method:
+              'DELETE'
+          request reqOpts, (err,res,body) ->
+            if err then return callback err
+            switch res.statusCode
+              when 204
+                callback null, true, "UCloud (http #{res.statusCode}) : File #{options.fileName} deleted"
+              when 401
+                callback new Error "UCloud (http #{res.statusCode}) : Token error"
+              when 403
+                callback new Error "UCloud (http #{res.statusCode}) : Unauthorized"
+              when 404
+                callback new Error "UCloud (http #{res.statusCode}) : Couldn't delete file #{options.fileName}, file doesn't exist"
+      ], (err,res,msg) ->
+        if err then return callback err
+        callback null, res, msg
+    else
+      callback new Error 'UCloud : Missing arguments container and fileName'
 
   # Private - Check if the current token is due to expire or not if it is due to expire then renew the token
   _checkExpiry: (callback) ->
