@@ -10,7 +10,8 @@
     "request": "",
     "underscore": "",
     "underscore.string": "",
-    "qs": ""
+    "qs": "",
+    "mime": ""
   },
   "devDependencies": {
     "mocha": "",

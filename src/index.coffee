@@ -8,6 +8,9 @@ _ = require 'underscore'
 _.str = require 'underscore.string'
 _.mixin(_.str.exports());
 async = require 'async'
+fs = require 'fs'
+mime = require 'mime'
+crypto = require 'crypto'
 
 class UCloud
   
@@ -229,6 +232,86 @@ class UCloud
         callback null, res, msg
     else
       callback new Error 'UCloud : No container specified'
+
+  upload: (options,callback) ->
+    self = @
+    if options? and options.filePath? and options.fileName? and options.container?
+      async.waterfall [
+        (callback) ->
+          if self.autoRefresh is true
+            self._checkExpiry (err) ->
+              if err then return callback err
+              callback null
+          else
+            callback null
+        ,(callback) ->
+          async.parallel [
+            (callback) ->
+              shasum = crypto.createHash 'md5'
+              buffer = null
+              stream = fs.ReadStream options.filePath
+              stream.on 'data', (data) ->
+                shasum.update data
+                if buffer is null
+                  buffer = data
+                else
+                  buffer += data
+              stream.on 'end', ->
+                shasum = shasum.digest 'hex'
+                result =
+                  shasum :
+                    shasum
+                  buffer:
+                    buffer
+                callback null, result
+              stream.on 'error', ->
+                callback new Error 'UCloud : Error reading file'
+            ,(callback) ->
+              fs.stat options.filePath, (err,stats) ->
+                if err then return callback err
+                callback null, stats.size
+            ,(callback) ->
+              callback null, mime.lookup options.filePath
+          ], (err,results) ->
+            if err then return callback err
+            callback null, results
+        ,(file,callback) ->
+          reqOpts =
+            headers:
+              "X-Auth-Token":self.token
+              "Content-Type":file[2]
+              "Content-Length":file[1]
+            url:
+              url.parse(url.resolve self.storageUrl, options.container+ '/'+options.fileName)
+            body:
+              file[0].buffer
+            method:
+              'PUT'
+          request reqOpts, (err,res,body) ->
+            if err then return callback err
+            switch res.statusCode
+              when 201
+                if options.checkMD5 is true
+                  if res.headers.etag is file[0].shasum
+                    callback null, true, "UCloud (http #{res.statusCode}) : #{options.fileName} uploaded"
+                  else
+                    callback new Error "UCloud (http #{res.statusCode}) : Bad MD5 checksum received from server"
+                else
+                  callback null, true, "UCloud (http #{res.statusCode}) : #{options.fileName} uploaded"
+              when 401
+                callback new Error "UCloud (http #{res.statusCode}) : #{options.fileName} upload failed, token error"
+              when 403
+                callback new Error "UCloud (http #{res.statusCode}) : #{options.fileName} upload failed, unauthorized"
+              when 412
+                callback new Error "UCloud (http #{res.statusCode}) : #{options.fileName} upload failed, Content-Length/Content-Type missing from headers"
+              when 422
+                callback new Error "UCloud (http #{res.statusCode}) : #{options.fileName} upload failed, Etag value doesn't match"
+      ], (err,res,msg) ->
+        if err then return callback err
+        callback null, res, msg
+    else
+      callback new Error "UCloud : Upload missing arguments in options"
+
 
   # Private - Check if the current token is due to expire or not if it is due to expire then renew the token
   _checkExpiry: (callback) ->
