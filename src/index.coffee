@@ -44,9 +44,9 @@ class UCloud
   auth: (callback) ->
     self = @
     reqOpts =
-      reqHeaders:
-        'X-Storage-Pass': @api_key
-        'X_Storage-User': @user
+      headers:
+         "X-Storage-Pass": self.api_key
+         "X-Storage-User": self.user
       url:
         url.parse @authUrl
     request reqOpts, (err,res,body) ->
@@ -60,6 +60,7 @@ class UCloud
         self.tokenExpiry = res.headers['x-auth-token-expires'] + new Date().getTime()
         callback null, true, body
       else if res.statusCode is 401
+        console.log body
         callback new Error 'UCloud Auth : Authentication failed'
 
   #Provides information on the storage account in json or xml format
@@ -71,7 +72,7 @@ class UCloud
     async.waterfall [
       (callback) ->
         if self.autoRefresh is true
-          self._checkExpiry(err) ->
+          self._checkExpiry (err) ->
             if err then return callback err
             callback null
         else
@@ -88,7 +89,7 @@ class UCloud
         if self.token    
           reqOpts =
               headers:
-                'X-Auth-Token': @token
+                'X-Auth-Token': self.token
               qs: 
                 query
               url: 
@@ -183,7 +184,7 @@ class UCloud
               when 201
                 callback null, true, "UCloud (http #{res.statusCode}) : Container #{container} created"
               when 202
-                callback null, false, "UCloud (http #{res.statusCode}) : Container #{container already exists}"
+                callback null, false, "UCloud (http #{res.statusCode}) : Container #{container} already exists"
               when 401
                 callback new Error "UCloud (http #{res.statusCode}) : Authentication failed, token error"
               when 403
@@ -257,10 +258,10 @@ class UCloud
                 else
                   buffer += data
               stream.on 'end', ->
-                shasum = shasum.digest 'hex'
+                checksum = shasum.digest 'hex'
                 result =
-                  shasum :
-                    shasum
+                  checksum:
+                    checksum
                   buffer:
                     buffer
                 callback null, result
@@ -282,7 +283,7 @@ class UCloud
               "Content-Type":file[2]
               "Content-Length":file[1]
             url:
-              url.parse(url.resolve self.storageUrl, options.container+ '/'+options.fileName)
+              url.parse(url.resolve self.storageUrl, options.container + '/' +options.fileName)
             body:
               file[0].buffer
             method:
@@ -292,7 +293,7 @@ class UCloud
             switch res.statusCode
               when 201
                 if options.checkMD5 is true
-                  if res.headers.etag is file[0].shasum
+                  if res.headers.etag is file[0].checksum
                     callback null, true, "UCloud (http #{res.statusCode}) : #{options.fileName} uploaded"
                   else
                     callback new Error "UCloud (http #{res.statusCode}) : Bad MD5 checksum received from server"
