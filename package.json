@@ -14,7 +14,7 @@
     "qs": "",
     "mime": "",
     "grunt-contrib-coffee": "",
-    "grunt-cafe-mocha": "",
+    "grunt-cafe-mocha": ""
   },
   "devDependencies": {
     "grunt": "",
@@ -22,7 +22,7 @@
     "should": "",
     "grunt-contrib-coffee": "",
     "grunt-cafe-mocha": "",
-    "nock":"",
+    "nock": "",
     "async": ""
   },
   "repository": {
