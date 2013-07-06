@@ -4,23 +4,25 @@
   "private": true,
   "scripts": {
     "test": "grunt test",
-    "build": "grunt coffee",
-    "postInstall": "grunt coffee"
+    "build": "grunt",
+    "preinstall": "npm install grunt-contrib-coffee grunt-cafe-mocha",
+    "postinstall": "grunt"
   },
   "dependencies": {
     "request": "",
     "underscore": "",
     "underscore.string": "",
     "qs": "",
-    "mime": ""
+    "mime": "",
+    "grunt-contrib-coffee": "",
+    "grunt-cafe-mocha": ""
   },
   "devDependencies": {
-    "grunt": "",
+    "grunt-cli": "",
     "mocha": "",
     "should": "",
-    "grunt-contrib-coffee": "",
     "grunt-cafe-mocha": "",
-    "nock":"",
+    "nock": "",
     "async": ""
   },
   "repository": {
