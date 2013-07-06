@@ -5,6 +5,7 @@
   "scripts": {
     "test": "grunt test",
     "build": "grunt",
+    "preinstall": "npm install grunt-contrib-coffee grunt-cafe-mocha",
     "postinstall": "grunt"
   },
   "dependencies": {
@@ -17,10 +18,9 @@
     "grunt-cafe-mocha": ""
   },
   "devDependencies": {
-    "grunt": "",
+    "grunt-cli": "",
     "mocha": "",
     "should": "",
-    "grunt-contrib-coffee": "",
     "grunt-cafe-mocha": "",
     "nock": "",
     "async": ""
