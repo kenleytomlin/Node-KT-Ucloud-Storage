@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "test": "grunt test",
-    "build": "grunt"
+    "build": "grunt coffee",
+    "postInstall" "grunt coffee"
   },
   "dependencies": {
     "request": "",
@@ -14,11 +15,16 @@
     "mime": ""
   },
   "devDependencies": {
+    "grunt": "",
     "mocha": "",
     "should": "",
     "grunt-contrib-coffee": "",
     "grunt-cafe-mocha": "",
     "nock":"",
     "async": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kenleytomlin/Node-KT-Ucloud-Storage"
   }
 }
