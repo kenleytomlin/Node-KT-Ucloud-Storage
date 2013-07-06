@@ -5,7 +5,7 @@
   "scripts": {
     "test": "grunt test",
     "build": "grunt coffee",
-    "postInstall": "grunt coffee"
+    "postinstall": "grunt coffee"
   },
   "dependencies": {
     "request": "",
