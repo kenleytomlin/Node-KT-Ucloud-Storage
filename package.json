@@ -1,0 +1,24 @@
+{
+  "name": "Node-KT-Ucloud-Storage",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "grunt test",
+    "build": "grunt"
+  },
+  "dependencies": {
+    "request": "",
+    "underscore": "",
+    "underscore.string": "",
+    "qs": "",
+    "mime": ""
+  },
+  "devDependencies": {
+    "mocha": "",
+    "should": "",
+    "grunt-contrib-coffee": "",
+    "grunt-cafe-mocha": "",
+    "nock":"",
+    "async": ""
+  }
+}
